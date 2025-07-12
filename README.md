@@ -1,4 +1,8 @@
-# IDEC-pytorch
+# Tips
+This project is inherited from https://github.com/dawnranger/IDEC-pytorch.
+For the convenience of personal scientific research, I had to rebuild the project.
+
+# IDEC
 
 Pytorch implementation of Improved Deep Embedded Clustering(IDEC)
 
@@ -8,7 +12,7 @@ original implementation in Keras:[IDEC](https://github.com/XifengGuo/IDEC)
 
 # Usage
 
-    python idec.py
+    python idec.py --dataset --gamma
 
 # Requirements
 
