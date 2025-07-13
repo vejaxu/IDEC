@@ -14,9 +14,15 @@ cuda: True
 n_input: 2
 =================================================
 
-Iter 000: Acc 0.8944, NMI 0.4698, ARI 0.6115, Δlabel 0.0000
-Iter 003: Acc 0.8665, NMI 0.3658, ARI 0.5190, Δlabel 0.0339
-Iter 006: Acc 0.8775, NMI 0.4026, ARI 0.5546, Δlabel 0.0110
-Iter 009: Acc 0.8845, NMI 0.4276, ARI 0.5776, Δlabel 0.0070
-Iter 012: Acc 0.8865, NMI 0.4350, ARI 0.5842, Δlabel 0.0020
-Iter 015: Acc 0.8875, NMI 0.4388, ARI 0.5875, Δlabel 0.0010
+Iter 000: Acc 0.9153, NMI 0.5536, ARI 0.6820, Δlabel 0.0000
+Iter 003: Acc 0.9193, NMI 0.6060, ARI 0.6977, Δlabel 0.0259
+Iter 006: Acc 0.9203, NMI 0.6214, ARI 0.7015, Δlabel 0.0050
+Iter 009: Acc 0.9153, NMI 0.5811, ARI 0.6839, Δlabel 0.0090
+Iter 012: Acc 0.9193, NMI 0.5864, ARI 0.6968, Δlabel 0.0080
+Iter 015: Acc 0.9173, NMI 0.5727, ARI 0.6897, Δlabel 0.0040
+Iter 018: Acc 0.9163, NMI 0.5674, ARI 0.6862, Δlabel 0.0030
+Iter 021: Acc 0.9163, NMI 0.5698, ARI 0.6864, Δlabel 0.0020
+Iter 024: Acc 0.9163, NMI 0.5724, ARI 0.6865, Δlabel 0.0020
+Iter 027: Acc 0.9163, NMI 0.5751, ARI 0.6867, Δlabel 0.0020
+Iter 030: Acc 0.9143, NMI 0.5695, ARI 0.6801, Δlabel 0.0020
+Iter 033: Acc 0.9143, NMI 0.5695, ARI 0.6801, Δlabel 0.0000
