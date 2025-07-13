@@ -364,5 +364,38 @@ if __name__ == "__main__":
         dataset = one_gaussian_10_one_line_5_2Dataset()
 
 
+    elif args.dataset == 'sparse_3_dense_3_dense_3_10':
+        args.n_clusters = 3
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 10
+        args.update_interval = 10
+        args.pretrain_path = f'data/sparse_3_dense_3_dense_3_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = sparse_3_dense_3_dense_3_10_Dataset()
+
+
+    elif args.dataset == 'sparse_8_dense_1_dense_1_10':
+        args.n_clusters = 3
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 10
+        args.update_interval = 3
+        args.pretrain_path = f'data/sparse_8_dense_1_dense_1_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = sparse_8_dense_1_dense_1_10_Dataset()
+
+
+    elif args.dataset == 'one_gaussian_10_one_line_5_2_10':
+        args.n_clusters = 2
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 10
+        args.update_interval = 3
+        args.pretrain_path = f'data/one_gaussian_10_one_line_5_2_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = one_gaussian_10_one_line_5_2_10Dataset()
+
+
     print(args)
     train_idec()

@@ -1,0 +1,26 @@
+========== IDEC Training Configuration ==========
+lr: 0.001
+n_clusters: 3
+batch_size: 256
+n_z: 10
+dataset: sparse_3_dense_3_dense_3_10
+pretrain_path: data/sparse_3_dense_3_dense_3_10/ae_gamma_0.05_nz_10_update_10.pkl
+gamma: 0.05
+update_interval: 10
+tol: 0.001
+train_epoch: 100
+pretrain_epoch: 200
+cuda: True
+n_input: 2
+=================================================
+
+Iter 000: Acc 0.9569, NMI 0.8510, ARI 0.8768, Δlabel 0.0000
+Iter 010: Acc 0.9061, NMI 0.7537, ARI 0.7504, Δlabel 0.0607
+Iter 020: Acc 0.8578, NMI 0.6881, ARI 0.6506, Δlabel 0.0491
+Iter 030: Acc 0.8913, NMI 0.7284, ARI 0.7166, Δlabel 0.0359
+Iter 040: Acc 0.8920, NMI 0.7319, ARI 0.7190, Δlabel 0.0089
+Iter 050: Acc 0.8279, NMI 0.6692, ARI 0.6071, Δlabel 0.0699
+Iter 060: Acc 0.8073, NMI 0.6552, ARI 0.5806, Δlabel 0.0210
+Iter 070: Acc 0.8179, NMI 0.6637, ARI 0.5947, Δlabel 0.0107
+Iter 080: Acc 0.8400, NMI 0.6826, ARI 0.6270, Δlabel 0.0221
+Iter 090: Acc 0.8140, NMI 0.6615, ARI 0.5901, Δlabel 0.0260
