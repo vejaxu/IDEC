@@ -146,6 +146,26 @@ def pretrain_ae(model):
 
 
 def train_idec():
+    model = IDEC(
+        n_enc_1=500,
+        n_enc_2=500,
+        n_enc_3=1000,
+        n_dec_1=1000,
+        n_dec_2=500,
+        n_dec_3=500,
+        # n_enc_1=10,
+        # n_enc_2=100,
+        # n_enc_3=200,
+        # n_dec_1=200,
+        # n_dec_2=100,
+        # n_dec_3=10,
+        n_input=args.n_input,
+        n_z=args.n_z,
+        n_clusters=args.n_clusters,
+        alpha=1.0,
+        pretrain_path=args.pretrain_path).to(device)
+    
+
     vis_dir = f'tsne/{args.dataset}/gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}'
     os.makedirs(vis_dir, exist_ok=True)
     log_path = os.path.join(vis_dir, "log.txt")
@@ -154,26 +174,9 @@ def train_idec():
         for arg_name, arg_val in vars(args).items():
             f.write(f"{arg_name}: {arg_val}\n")
         f.write("=================================================\n\n")
+        f.write(str(model))
+        f.write("=================================================\n\n")
 
-
-    model = IDEC(
-        # n_enc_1=500,
-        # n_enc_2=500,
-        # n_enc_3=1000,
-        # n_dec_1=1000,
-        # n_dec_2=500,
-        # n_dec_3=500,
-        n_enc_1=10,
-        n_enc_2=100,
-        n_enc_3=200,
-        n_dec_1=200,
-        n_dec_2=100,
-        n_dec_3=10,
-        n_input=args.n_input,
-        n_z=args.n_z,
-        n_clusters=args.n_clusters,
-        alpha=1.0,
-        pretrain_path=args.pretrain_path).to(device)
 
 
     """这里在需要调整
@@ -329,6 +332,17 @@ if __name__ == "__main__":
         args.update_interval = 3
         args.pretrain_path = f'data/AC/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = ACDataset()
+
+
+    elif args.dataset == '4C':
+        args.n_clusters = 4
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 2
+        args.update_interval = 3
+        args.pretrain_path = f'data/4C/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = fourCDataset()
 
 
     elif args.dataset == 'sparse_3_dense_3_dense_3':

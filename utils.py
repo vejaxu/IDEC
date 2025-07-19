@@ -66,6 +66,29 @@ class ACDataset(Dataset):
             np.array(self.y[idx])), torch.from_numpy(np.array(idx))
     
 
+def load_4C(path='/data/xwj/aaa/clustering/data/4C.mat'):
+    f = loadmat(path)
+    x_train, y_train = f['data'], f['class']
+    x_row = x_train
+    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+    x = x_train.astype(np.float32)
+    y = y_train.flatten().astype(np.int32)
+    return x, y, x_row
+
+
+class fourCDataset(Dataset):
+    
+    def __init__(self):
+        self.x, self.y, self.x_row = load_4C()
+
+    def __len__(self):
+        return self.x.shape[0]
+
+    def __getitem__(self, idx):
+        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
+            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
+    
+
 def load_sparse_3_dense_3_dense_3(path='/data/xwj/aaa/clustering/data/sparse_3_dense_3_dense_3.mat'):
     f = loadmat(path)
     x_train, y_train = f['data'], f['class']
