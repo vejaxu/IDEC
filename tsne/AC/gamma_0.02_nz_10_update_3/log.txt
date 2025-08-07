@@ -14,10 +14,30 @@ cuda: True
 n_input: 2
 =================================================
 
-Iter 000: Acc 0.8765, NMI 0.4018, ARI 0.5522, Δlabel 0.0000
-Iter 003: Acc 0.8805, NMI 0.4182, ARI 0.5658, Δlabel 0.0080
-Iter 006: Acc 0.8964, NMI 0.4811, ARI 0.6187, Δlabel 0.0159
-Iter 009: Acc 0.8984, NMI 0.4913, ARI 0.6256, Δlabel 0.0040
-Iter 012: Acc 0.8964, NMI 0.4811, ARI 0.6187, Δlabel 0.0040
-Iter 015: Acc 0.8944, NMI 0.4727, ARI 0.6120, Δlabel 0.0020
-Iter 018: Acc 0.8944, NMI 0.4727, ARI 0.6120, Δlabel 0.0000
+IDEC(
+  (ae): AE(
+    (enc_1): Linear(in_features=2, out_features=500, bias=True)
+    (enc_2): Linear(in_features=500, out_features=500, bias=True)
+    (enc_3): Linear(in_features=500, out_features=1000, bias=True)
+    (z_layer): Linear(in_features=1000, out_features=10, bias=True)
+    (dec_1): Linear(in_features=10, out_features=1000, bias=True)
+    (dec_2): Linear(in_features=1000, out_features=500, bias=True)
+    (dec_3): Linear(in_features=500, out_features=500, bias=True)
+    (x_bar_layer): Linear(in_features=500, out_features=2, bias=True)
+  )
+)=================================================
+
+Iter 000: Acc 0.8984, NMI 0.4771, ARI 0.6234, Δlabel 0.0000
+Iter 003: Acc 0.8665, NMI 0.3588, ARI 0.5124, Δlabel 0.0637
+Iter 006: Acc 0.8645, NMI 0.3529, ARI 0.5037, Δlabel 0.0120
+Iter 009: Acc 0.8755, NMI 0.3949, ARI 0.5478, Δlabel 0.0548
+Iter 012: Acc 0.8785, NMI 0.4061, ARI 0.5579, Δlabel 0.0050
+Iter 015: Acc 0.8884, NMI 0.4425, ARI 0.5908, Δlabel 0.0100
+Iter 018: Acc 0.9004, NMI 0.4905, ARI 0.6311, Δlabel 0.0120
+Iter 021: Acc 0.9034, NMI 0.5050, ARI 0.6415, Δlabel 0.0050
+Iter 024: Acc 0.9034, NMI 0.5084, ARI 0.6419, Δlabel 0.0040
+Iter 027: Acc 0.9044, NMI 0.5166, ARI 0.6457, Δlabel 0.0050
+Iter 030: Acc 0.9044, NMI 0.5186, ARI 0.6459, Δlabel 0.0020
+Iter 033: Acc 0.9044, NMI 0.5249, ARI 0.6464, Δlabel 0.0060
+Iter 036: Acc 0.9054, NMI 0.5322, ARI 0.6500, Δlabel 0.0030
+Iter 039: Acc 0.9044, NMI 0.5295, ARI 0.6468, Δlabel 0.0010
