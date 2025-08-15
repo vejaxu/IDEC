@@ -177,14 +177,6 @@ def train_idec():
         f.write(str(model))
         f.write("=================================================\n\n")
 
-
-
-    """这里在需要调整
-    tips
-    tips
-    tips
-    tips
-    """
     #  model.pretrain('data/ae_mnist.pkl')
     # model.pretrain(args.pretrain_path)
     model.pretrain()
@@ -253,9 +245,18 @@ def train_idec():
                 x_2d = tsne_input.fit_transform(x_input)
             else:
                 x_2d = x_input
-            def plot_tsne(X_2d, labels, title, subplot_idx):
+
+            centers_z = model.cluster_layer.data.cpu().numpy()
+            if z.shape[1] > 2:
+                tsne_center = TSNE(n_components=2, random_state=42)
+                centers_2d = tsne_center.fit_transform(centers_z)
+            else:
+                centers_2d = centers_z
+
+            def plot_tsne(X_2d, labels, centers, title, subplot_idx):
                 plt.subplot(1, 2, subplot_idx)
                 scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
+                plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='*', s=200, edgecolors='k', linewidths=1.5, label='Cluster Centers')
                 plt.title(title)
                 plt.xlabel("Dimension 1")
                 plt.ylabel("Dimension 2")
@@ -263,8 +264,8 @@ def train_idec():
                 plt.grid(True)
                 plt.axis('equal')
             plt.figure(figsize=(12, 6))
-            plot_tsne(x_2d, y, "True Labels", 1)
-            plot_tsne(x_2d, y_pred, "IDEC", 2)
+            plot_tsne(x_2d, y, centers_2d, "True Labels", 1)
+            plot_tsne(x_2d, y_pred, centers_2d, "IDEC", 2)
             plt.tight_layout()
             plt.savefig(f"{vis_dir}/epoch_{epoch:03d}.jpg", dpi=300)
 
