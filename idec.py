@@ -233,18 +233,19 @@ def train_idec():
             
             model.eval()
             cluster_centers = model.cluster_layer.data.cpu().numpy() 
+            with torch.no_grad():
+                dec_h1 = F.relu(model.ae.dec_1(cluster_centers))
+                dec_h2 = F.relu(model.ae.dec_2(dec_h1))
+                dec_h3 = F.relu(model.ae.dec_3(dec_h2))
+                x_centers = model.ae.x_bar_layer(dec_h3)
             x_input = dataset.x_row
             if x_input.shape[1] > 2:
                 tsne_input = TSNE(n_components=2, random_state=42)
                 x_2d = tsne_input.fit_transform(x_input)
+                x_centers_2d = tsne_input.fit_transform(x_centers)
             else:
                 x_2d = x_input
-            
-            if cluster_centers.shape[1] > 2:
-                tsne_input = TSNE(n_components=2, random_state=42)
-                centers_2d = tsne_input.fit_transform(cluster_centers)
-            else:
-                centers_2d = cluster_centers
+                x_centers_2d = x_centers
 
             def plot_tsne(X_2d, labels, centers, title):
                 scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
@@ -256,7 +257,7 @@ def train_idec():
                 plt.grid(True)
                 plt.axis('equal')
             plt.figure(figsize=(6, 6))
-            plot_tsne(x_2d, y_pred, centers_2d, "IDEC")
+            plot_tsne(x_2d, y_pred, x_centers_2d, "IDEC")
             plt.tight_layout()
             plt.savefig(f"{vis_dir}/epoch_{epoch:03d}.jpg", dpi=300)
 
