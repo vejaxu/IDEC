@@ -141,6 +141,7 @@ def pretrain_ae(model):
 
         print("epoch {} loss={:.4f}".format(epoch,
                                             total_loss / (batch_idx + 1)))
+        os.makedirs(os.path.dirname(args.pretrain_path), exist_ok=True)
         torch.save(model.state_dict(), args.pretrain_path)
     print("model saved to {}.".format(args.pretrain_path))
 
@@ -222,8 +223,6 @@ def train_idec():
             acc = cluster_acc(y, y_pred)
             nmi = nmi_score(y, y_pred)
             ari = ari_score(y, y_pred)
-            # print('Iter {}'.format(epoch), ':Acc {:.4f}'.format(acc),
-            #       ', nmi {:.4f}'.format(nmi), ', ari {:.4f}'.format(ari))
             
 
             with open(log_path, "a") as f:
@@ -232,29 +231,22 @@ def train_idec():
                 print(log_str.strip())
                 f.write(log_str)
             
-
             model.eval()
-            with torch.no_grad():
-                _, z = model.ae(data)
-            z = z.cpu().numpy()
-            # 获取原始输入数据
-            x_input = dataset.x_row  # numpy array
-            # 对原始输入数据做 t-SNE 降维（固定 random_state 保证稳定
+            cluster_centers = model.cluster_layer.data.cpu().numpy() 
+            x_input = dataset.x_row
             if x_input.shape[1] > 2:
                 tsne_input = TSNE(n_components=2, random_state=42)
                 x_2d = tsne_input.fit_transform(x_input)
             else:
                 x_2d = x_input
-
-            centers_z = model.cluster_layer.data.cpu().numpy()
-            if z.shape[1] > 2:
-                tsne_center = TSNE(n_components=2, random_state=42)
-                centers_2d = tsne_center.fit_transform(centers_z)
+            
+            if cluster_centers.shape[1] > 2:
+                tsne_input = TSNE(n_components=2, random_state=42)
+                centers_2d = tsne_input.fit_transform(cluster_centers)
             else:
-                centers_2d = centers_z
+                centers_2d = cluster_centers
 
-            def plot_tsne(X_2d, labels, centers, title, subplot_idx):
-                plt.subplot(1, 2, subplot_idx)
+            def plot_tsne(X_2d, labels, centers, title):
                 scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
                 plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='*', s=200, edgecolors='k', linewidths=1.5, label='Cluster Centers')
                 plt.title(title)
@@ -263,18 +255,17 @@ def train_idec():
                 plt.colorbar(scatter, label='Class Labels')
                 plt.grid(True)
                 plt.axis('equal')
-            plt.figure(figsize=(12, 6))
-            plot_tsne(x_2d, y, centers_2d, "True Labels", 1)
-            plot_tsne(x_2d, y_pred, centers_2d, "IDEC", 2)
+            plt.figure(figsize=(6, 6))
+            plot_tsne(x_2d, y_pred, centers_2d, "IDEC")
             plt.tight_layout()
             plt.savefig(f"{vis_dir}/epoch_{epoch:03d}.jpg", dpi=300)
-
 
             if epoch > 0 and delta_label < args.tol:
                 print('delta_label {:.4f}'.format(delta_label), '< tol',
                       args.tol)
                 print('Reached tolerance threshold. Stopping training.')
                 break
+
         for batch_idx, (x, _, idx) in enumerate(train_loader):
 
             x = x.to(device)
@@ -329,7 +320,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/AC/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = ACDataset()
@@ -351,7 +342,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_3_dense_3_dense_3/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = sparse_3_dense_3_dense_3Dataset()
@@ -362,7 +353,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_8_dense_1_dense_1/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = sparse_8_dense_1_dense_1Dataset()
@@ -373,7 +364,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/one_gaussian_10_one_line_5_2/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = one_gaussian_10_one_line_5_2Dataset()
@@ -384,7 +375,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 10
         args.pretrain_path = f'data/sparse_3_dense_3_dense_3_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = sparse_3_dense_3_dense_3_10_Dataset()
@@ -395,7 +386,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_8_dense_1_dense_1_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = sparse_8_dense_1_dense_1_10_Dataset()
@@ -406,7 +397,7 @@ if __name__ == "__main__":
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
-        args.n_z = 10
+        args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/one_gaussian_10_one_line_5_2_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = one_gaussian_10_one_line_5_2_10Dataset()
