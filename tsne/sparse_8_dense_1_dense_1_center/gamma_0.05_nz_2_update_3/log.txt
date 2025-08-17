@@ -1,0 +1,63 @@
+========== IDEC Training Configuration ==========
+lr: 0.001
+n_clusters: 3
+batch_size: 256
+n_z: 2
+dataset: sparse_8_dense_1_dense_1
+pretrain_path: data/sparse_8_dense_1_dense_1/ae_gamma_0.05_nz_2_update_3.pkl
+gamma: 0.05
+update_interval: 3
+tol: 0.001
+train_epoch: 100
+pretrain_epoch: 200
+cuda: True
+n_input: 2
+=================================================
+
+IDEC(
+  (ae): AE(
+    (enc_1): Linear(in_features=2, out_features=500, bias=True)
+    (enc_2): Linear(in_features=500, out_features=500, bias=True)
+    (enc_3): Linear(in_features=500, out_features=1000, bias=True)
+    (z_layer): Linear(in_features=1000, out_features=2, bias=True)
+    (dec_1): Linear(in_features=2, out_features=1000, bias=True)
+    (dec_2): Linear(in_features=1000, out_features=500, bias=True)
+    (dec_3): Linear(in_features=500, out_features=500, bias=True)
+    (x_bar_layer): Linear(in_features=500, out_features=2, bias=True)
+  )
+)=================================================
+
+Iter 000: Acc 0.5000, NMI 0.5218, ARI 0.3442, Δlabel 0.0000
+Iter 003: Acc 0.7856, NMI 0.5642, ARI 0.6017, Δlabel 0.3044
+Iter 006: Acc 0.7544, NMI 0.5707, ARI 0.5533, Δlabel 0.0511
+Iter 009: Acc 0.7400, NMI 0.4801, ARI 0.4834, Δlabel 0.0578
+Iter 012: Acc 0.6378, NMI 0.3896, ARI 0.3019, Δlabel 0.1022
+Iter 015: Acc 0.6144, NMI 0.3623, ARI 0.2580, Δlabel 0.0244
+Iter 018: Acc 0.5856, NMI 0.3488, ARI 0.2249, Δlabel 0.0289
+Iter 021: Acc 0.5322, NMI 0.3222, ARI 0.1685, Δlabel 0.0533
+Iter 024: Acc 0.6456, NMI 0.4338, ARI 0.3455, Δlabel 0.1211
+Iter 027: Acc 0.5922, NMI 0.4567, ARI 0.3265, Δlabel 0.0822
+Iter 030: Acc 0.5233, NMI 0.4443, ARI 0.2911, Δlabel 0.0700
+Iter 033: Acc 0.5967, NMI 0.5201, ARI 0.3704, Δlabel 0.0778
+Iter 036: Acc 0.5789, NMI 0.4927, ARI 0.3451, Δlabel 0.0200
+Iter 039: Acc 0.5767, NMI 0.4761, ARI 0.3329, Δlabel 0.0122
+Iter 042: Acc 0.5522, NMI 0.4631, ARI 0.3139, Δlabel 0.0244
+Iter 045: Acc 0.5378, NMI 0.4345, ARI 0.2864, Δlabel 0.0189
+Iter 048: Acc 0.5111, NMI 0.4034, ARI 0.2513, Δlabel 0.0311
+Iter 051: Acc 0.4933, NMI 0.3903, ARI 0.2351, Δlabel 0.0178
+Iter 054: Acc 0.4856, NMI 0.3850, ARI 0.2286, Δlabel 0.0089
+Iter 057: Acc 0.5011, NMI 0.4141, ARI 0.2601, Δlabel 0.0233
+Iter 060: Acc 0.4767, NMI 0.4296, ARI 0.2729, Δlabel 0.0422
+Iter 063: Acc 0.5033, NMI 0.4648, ARI 0.3047, Δlabel 0.0356
+Iter 066: Acc 0.5311, NMI 0.5028, ARI 0.3361, Δlabel 0.0289
+Iter 069: Acc 0.5322, NMI 0.5028, ARI 0.3363, Δlabel 0.0033
+Iter 072: Acc 0.5244, NMI 0.4932, ARI 0.3285, Δlabel 0.0089
+Iter 075: Acc 0.4889, NMI 0.4671, ARI 0.3056, Δlabel 0.0356
+Iter 078: Acc 0.4856, NMI 0.4451, ARI 0.2872, Δlabel 0.0222
+Iter 081: Acc 0.5089, NMI 0.4390, ARI 0.2840, Δlabel 0.0289
+Iter 084: Acc 0.5067, NMI 0.4202, ARI 0.2667, Δlabel 0.0122
+Iter 087: Acc 0.4756, NMI 0.4115, ARI 0.2554, Δlabel 0.0467
+Iter 090: Acc 0.4867, NMI 0.4570, ARI 0.2973, Δlabel 0.0400
+Iter 093: Acc 0.4878, NMI 0.4522, ARI 0.2933, Δlabel 0.0167
+Iter 096: Acc 0.5067, NMI 0.4837, ARI 0.3194, Δlabel 0.0211
+Iter 099: Acc 0.4844, NMI 0.4697, ARI 0.3076, Δlabel 0.0222

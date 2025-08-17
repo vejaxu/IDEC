@@ -178,9 +178,9 @@ def train_idec():
         f.write(str(model))
         f.write("=================================================\n\n")
 
-    #  model.pretrain('data/ae_mnist.pkl')
-    # model.pretrain(args.pretrain_path)
-    model.pretrain()
+    """ATTENTION !!!"""
+    model.pretrain(args.pretrain_path)
+    # model.pretrain()
 
     train_loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False)
@@ -232,12 +232,12 @@ def train_idec():
                 f.write(log_str)
             
             model.eval()
-            cluster_centers = model.cluster_layer.data.cpu().numpy() 
+            cluster_centers = model.cluster_layer.data
             with torch.no_grad():
                 dec_h1 = F.relu(model.ae.dec_1(cluster_centers))
                 dec_h2 = F.relu(model.ae.dec_2(dec_h1))
                 dec_h3 = F.relu(model.ae.dec_3(dec_h2))
-                x_centers = model.ae.x_bar_layer(dec_h3)
+                x_centers = model.ae.x_bar_layer(dec_h3).cpu().numpy()
             x_input = dataset.x_row
             if x_input.shape[1] > 2:
                 tsne_input = TSNE(n_components=2, random_state=42)
@@ -249,7 +249,7 @@ def train_idec():
 
             def plot_tsne(X_2d, labels, centers, title):
                 scatter = plt.scatter(X_2d[:, 0], X_2d[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
-                plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='*', s=200, edgecolors='k', linewidths=1.5, label='Cluster Centers')
+                # plt.scatter(centers[:, 0], centers[:, 1], c='red', marker='*', s=200, edgecolors='k', linewidths=1.5, label='Cluster Centers')
                 plt.title(title)
                 plt.xlabel("Dimension 1")
                 plt.ylabel("Dimension 2")
