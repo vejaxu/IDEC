@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dataset_name="sparse_8_dense_1_dense_1"  # 替换成实际的数据集名称
+dataset_name="sparse_3_dense_3_dense_3"  # 替换成实际的数据集名称
 gamma_values=(0.01 0.02 0.05 0.1 0.2 0.5 1.0)
 
 for gamma in "${gamma_values[@]}"
