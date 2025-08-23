@@ -314,7 +314,8 @@ def train_idec():
         f.write("=================================================\n\n")
 
     """ATTENTION !!!"""
-    model.pretrain(args.pretrain_path)
+    # model.pretrain(args.pretrain_path)
+    model.pretrain()
 
     train_loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False)
