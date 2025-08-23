@@ -687,7 +687,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/AC/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = ACDataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == '4C':
@@ -698,7 +698,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/4C/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = fourCDataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == 'sparse_3_dense_3_dense_3':
@@ -709,7 +709,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_3_dense_3_dense_3/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = sparse_3_dense_3_dense_3Dataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == 'sparse_8_dense_1_dense_1':
@@ -720,7 +720,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_8_dense_1_dense_1/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = sparse_8_dense_1_dense_1Dataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == 'one_gaussian_10_one_line_5_2':
@@ -731,7 +731,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/one_gaussian_10_one_line_5_2/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = one_gaussian_10_one_line_5_2Dataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == 'sparse_3_dense_3_dense_3_10':
@@ -742,8 +742,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 10
         args.pretrain_path = f'data/sparse_3_dense_3_dense_3_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = sparse_3_dense_3_dense_3_10_Dataset()
-
+        dataset = CustomDataset(args.dataset)
 
     elif args.dataset == 'sparse_8_dense_1_dense_1_10':
         args.n_clusters = 3
@@ -753,7 +752,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/sparse_8_dense_1_dense_1_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = sparse_8_dense_1_dense_1_10_Dataset()
+        dataset = CustomDataset(args.dataset)
 
 
     elif args.dataset == 'one_gaussian_10_one_line_5_2_10':
@@ -764,7 +763,7 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/one_gaussian_10_one_line_5_2_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
-        dataset = one_gaussian_10_one_line_5_2_10Dataset()
+        dataset = CustomDataset(args.dataset)
 
 
     print(args)

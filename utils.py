@@ -43,181 +43,38 @@ class MnistDataset(Dataset):
             np.array(self.y[idx])), torch.from_numpy(np.array(idx))
     
 
-def load_AC(path='/data/xwj/aaa/clustering/data/AC.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['data'], f['class']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class ACDataset(Dataset):
+def load_dataset(dataset_name):
+    if dataset_name == "AC":
+        path='/data/xwj/aaa/clustering/data/AC.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
+    elif dataset_name == "4C":
+        path='/data/xwj/aaa/clustering/data/4C.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
+    elif dataset_name == "sparse_8_dense_1_dense_1":
+        path='/data/xwj/aaa/clustering/data/sparse_8_dense_1_dense_1.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
     
-    def __init__(self):
-        self.x, self.y, self.x_row = load_AC()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_4C(path='/data/xwj/aaa/clustering/data/4C.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['data'], f['class']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class fourCDataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_4C()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_sparse_3_dense_3_dense_3(path='/data/xwj/aaa/clustering/data/sparse_3_dense_3_dense_3.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['data'], f['class']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class sparse_3_dense_3_dense_3Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_sparse_3_dense_3_dense_3()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_sparse_8_dense_1_dense_1(path='/data/xwj/aaa/clustering/data/sparse_8_dense_1_dense_1.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['data'], f['class']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class sparse_8_dense_1_dense_1Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_sparse_8_dense_1_dense_1()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_one_gaussian_10_one_line_5_2(path='/data/xwj/aaa/clustering/data/one_gaussian_10_one_line_5_2.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['data'], f['class']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class one_gaussian_10_one_line_5_2Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_one_gaussian_10_one_line_5_2()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_sparse_3_dense_3_dense_3_10(path='/data/xwj/aaa/clustering/data/sparse_3_dense_3_dense_3_10.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['all_data'], f['all_labels']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class sparse_3_dense_3_dense_3_10_Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_sparse_3_dense_3_dense_3_10()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_sparse_8_dense_1_dense_1_10(path='/data/xwj/aaa/clustering/data/sparse_8_dense_1_dense_1_10.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['all_data'], f['all_labels']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class sparse_8_dense_1_dense_1_10_Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_sparse_8_dense_1_dense_1_10()
-
-    def __len__(self):
-        return self.x.shape[0]
-
-    def __getitem__(self, idx):
-        return torch.from_numpy(np.array(self.x[idx])), torch.from_numpy(
-            np.array(self.y[idx])), torch.from_numpy(np.array(idx))
-    
-
-def load_one_gaussian_10_one_line_5_2_10(path='/data/xwj/aaa/clustering/data/one_gaussian_10_one_line_5_2_10.mat'):
-    f = loadmat(path)
-    x_train, y_train = f['all_data'], f['all_labels']
-    x_row = x_train
-    x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
-    x = x_train.astype(np.float32)
-    y = y_train.flatten().astype(np.int32)
-    return x, y, x_row
-
-
-class one_gaussian_10_one_line_5_2_10Dataset(Dataset):
-    
-    def __init__(self):
-        self.x, self.y, self.x_row = load_one_gaussian_10_one_line_5_2_10()
+class CustomDataset(Dataset):
+    def __init__(self, dataset_name):
+            self.x, self.y, self.x_row = load_dataset(dataset_name)
 
     def __len__(self):
         return self.x.shape[0]
