@@ -45,7 +45,7 @@ class MnistDataset(Dataset):
 
 def load_dataset(dataset_name):
     if dataset_name == "AC":
-        path='/data/xwj/aaa/clustering/data/AC.mat'
+        path='/home/xwj/aaa/clustering/data/AC.mat'
         f = loadmat(path)
         x_train, y_train = f['data'], f['class']
         x_row = x_train
@@ -54,7 +54,7 @@ def load_dataset(dataset_name):
         y = y_train.flatten().astype(np.int32)
         return x, y, x_row
     elif dataset_name == "4C":
-        path='/data/xwj/aaa/clustering/data/4C.mat'
+        path='/home/xwj/aaa/clustering/data/4C.mat'
         f = loadmat(path)
         x_train, y_train = f['data'], f['class']
         x_row = x_train
@@ -63,7 +63,7 @@ def load_dataset(dataset_name):
         y = y_train.flatten().astype(np.int32)
         return x, y, x_row
     elif dataset_name == "sparse_8_dense_1_dense_1":
-        path='/data/xwj/aaa/clustering/data/sparse_8_dense_1_dense_1.mat'
+        path='/home/xwj/aaa/clustering/data/sparse_8_dense_1_dense_1.mat'
         f = loadmat(path)
         x_train, y_train = f['data'], f['class']
         x_row = x_train
@@ -72,7 +72,16 @@ def load_dataset(dataset_name):
         y = y_train.flatten().astype(np.int32)
         return x, y, x_row
     elif dataset_name == "sparse_3_dense_3_dense_3":
-        path='/data/xwj/aaa/clustering/data/sparse_3_dense_3_dense_3.mat'
+        path='/home/xwj/aaa/clustering/data/sparse_3_dense_3_dense_3.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
+    elif dataset_name == "overlapping":
+        path='/home/xwj/aaa/clustering/data/kmeans/dataset_overlapping.mat'
         f = loadmat(path)
         x_train, y_train = f['data'], f['class']
         x_row = x_train
