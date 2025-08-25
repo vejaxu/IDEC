@@ -778,5 +778,16 @@ if __name__ == "__main__":
         dataset = CustomDataset(args.dataset)
 
 
+    elif args.dataset == 'non_spherical':
+        args.n_clusters = 2
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 2
+        args.update_interval = 3
+        args.pretrain_path = f'data/non_spherical/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = CustomDataset(args.dataset)
+
+
     print(args)
     train_idec()
