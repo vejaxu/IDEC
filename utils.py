@@ -107,6 +107,15 @@ def load_dataset(dataset_name):
         x = x_train.astype(np.float32)
         y = y_train.flatten().astype(np.int32)
         return x, y, x_row
+    elif dataset_name == "metric_mismatch":
+        path='/home/xwj/aaa/clustering/data/kmeans/dataset_metric_mismatch.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
     
 class CustomDataset(Dataset):
     def __init__(self, dataset_name):
