@@ -163,13 +163,11 @@ def train_idec():
         n_clusters=args.n_clusters,
         alpha=1.0,
         pretrain_path=args.pretrain_path).to(device)
-
-    # 创建可视化目录
+    
     vis_dir = f'tsne/{args.dataset}/gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}'
     os.makedirs(vis_dir, exist_ok=True)
     log_path = os.path.join(vis_dir, "log.txt")
 
-    # 保存训练配置
     with open(log_path, "a") as f:
         f.write("========== IDEC Training Configuration ==========\n")
         for arg_name, arg_val in vars(args).items():
@@ -178,191 +176,136 @@ def train_idec():
         f.write(str(model))
         f.write("=================================================\n\n")
 
-    """ Pretrain Autoencoder """
-    model.pretrain()  # 假设内部已处理路径
+    """ATTENTION !!!"""
+    # model.pretrain(args.pretrain_path)
+    model.pretrain()
 
-    # 数据加载
-    train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    train_loader = DataLoader(
+        dataset, batch_size=args.batch_size, shuffle=False)
+    optimizer = Adam(model.parameters(), lr=args.lr)
 
-    # 初始聚类：使用 K-Means
-    data = torch.Tensor(dataset.x).to(device)
-    with torch.no_grad():
-        x_bar, z = model.ae(data)
-    z_np = z.cpu().numpy()
+    # cluster parameter initiate
+    data = dataset.x
+    y = dataset.y
+    data = torch.Tensor(data).to(device)
+    x_bar, hidden = model.ae(data)
 
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
-    y_pred = kmeans.fit_predict(z_np)
-    y = dataset.y
+    y_pred = kmeans.fit_predict(hidden.data.cpu().numpy())
+
     nmi_k = nmi_score(y_pred, y)
-    print(f"Initial NMI: {nmi_k:.4f}")
+    print("initial nmi score={:.4f}".format(nmi_k))
 
-    # 初始化聚类层
+    hidden = None
+    x_bar = None
+
+    y_pred_last = y_pred
     model.cluster_layer.data = torch.tensor(kmeans.cluster_centers_).to(device)
-    y_pred_last = y_pred.copy()
 
-    # 开始训练
     model.train()
     for epoch in range(args.train_epoch):
+
         if epoch % args.update_interval == 0:
-            with torch.no_grad():
-                _, q = model(data)
-                p = target_distribution(q).data
-                y_pred = q.cpu().numpy().argmax(1)
-                delta_label = np.sum(y_pred != y_pred_last).astype(np.float32) / y_pred.shape[0]
-                y_pred_last = y_pred.copy()
 
-                acc = cluster_acc(y, y_pred)
-                nmi = nmi_score(y, y_pred)
-                ari = ari_score(y, y_pred)
+            _, tmp_q = model(data)
 
-            # 记录指标
-            log_str = f'Iter {epoch:03d}: Acc {acc:.4f}, NMI {nmi:.4f}, ARI {ari:.4f}, Δlabel {delta_label:.4f}'
-            print(log_str)
+            # update target distribution p
+            tmp_q = tmp_q.data
+            p = target_distribution(tmp_q)
+
+            # evaluate clustering performance
+            y_pred = tmp_q.cpu().numpy().argmax(1)
+            delta_label = np.sum(y_pred != y_pred_last).astype(
+                np.float32) / y_pred.shape[0]
+            y_pred_last = y_pred
+
+            acc = cluster_acc(y, y_pred)
+            nmi = nmi_score(y, y_pred)
+            ari = ari_score(y, y_pred)
+            
             with open(log_path, "a") as f:
-                f.write(log_str + "\n")
-
-            # ==================== 可视化部分 ====================
+                log_str = 'Iter {:03d}: Acc {:.4f}, NMI {:.4f}, ARI {:.4f}, Δlabel {:.4f}\n'.format(
+                    epoch, acc, nmi, ari, delta_label)
+                print(log_str.strip())
+                f.write(log_str)
+            
             model.eval()
-            cluster_centers_z = model.cluster_layer.data  # (k, n_z)
-
+            cluster_centers = model.cluster_layer.data
+            
+            # 获取编码空间的表示和解码空间的表示
             with torch.no_grad():
-                # 获取编码空间表示 z (高维)
+                # 原始数据在编码空间的表示
                 enc_h1 = F.relu(model.ae.enc_1(data))
                 enc_h2 = F.relu(model.ae.enc_2(enc_h1))
                 enc_h3 = F.relu(model.ae.enc_3(enc_h2))
-                z_representation = model.ae.z_layer(enc_h3).cpu().numpy()  # (n_samples, n_z)
+                x_encoded = model.ae.z_layer(enc_h3).cpu().numpy()
 
-                # 获取聚类中心在编码空间的表示 (k, n_z)
-                enc_center_h1 = F.relu(model.ae.enc_1(cluster_centers_z))
-                enc_center_h2 = F.relu(model.ae.enc_2(enc_center_h1))
-                enc_center_h3 = F.relu(model.ae.enc_3(enc_center_h2))
-                z_centers = model.ae.z_layer(enc_center_h3).cpu().numpy()  # (k, n_z)
+            # 原始空间数据
+            x_input = dataset.x_row
 
-                # 原始空间数据
-                x_input = dataset.x_row  # 原始高维数据 (n_samples, d)
-
-            # ===== t-SNE 降维 =====
-            # 原始空间降维
             if x_input.shape[1] > 2:
                 tsne_input = TSNE(n_components=2, random_state=42)
-                X_2d_original = tsne_input.fit_transform(x_input)
+                x_input_2d = tsne_input.fit_transform(x_input)
+                x_encoded_2d = tsne_input.fit_transform(x_encoded)
             else:
-                X_2d_original = x_input
+                x_input_2d = x_input
+                x_encoded_2d = x_encoded
 
-            # 编码空间降维
-            if z_representation.shape[1] > 2:
-                tsne_z = TSNE(n_components=2, random_state=42)
-                X_2d_encoded = tsne_z.fit_transform(z_representation)
-                # 降维聚类中心
-                z_centers_2d = tsne_z.transform(z_centers)  # 使用相同映射
-            else:
-                X_2d_encoded = z_representation
-                z_centers_2d = z_centers
+            save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
 
-            # ===== 计算编码空间距离 =====
-            from sklearn.metrics.pairwise import euclidean_distances
-            dist_to_centers = euclidean_distances(z_representation, z_centers)  # (n, k)
-            min_dist_in_z = dist_to_centers.min(axis=1)  # (n,)
+            if epoch > 0 and delta_label < args.tol:
+                print('delta_label {:.4f}'.format(delta_label), '< tol',
+                      args.tol)
+                print('Reached tolerance threshold. Stopping training.')
+                break
 
-            # ===== 保存可视化 =====
-            save_idec_visualizations(
-                X_2d_original=X_2d_original,
-                X_2d_encoded=X_2d_encoded,
-                labels=y_pred,
-                centers_encoded=z_centers_2d,
-                min_dist_in_z=min_dist_in_z,
-                epoch=epoch,
-                vis_dir=vis_dir
-            )
+        for batch_idx, (x, _, idx) in enumerate(train_loader):
 
-            model.train()
+            x = x.to(device)
+            idx = idx.to(device)
 
-        # 标准 IDEC 损失更新
-        if (epoch + 1) % args.update_interval == 0:
-            x_bar, q = model(data)
-            p = target_distribution(q).detach()
-            loss = model.loss_function(p, q, x_bar, data)
-        else:
-            x_bar, q = model(data)
-            loss = model.reconstruction_loss(x_bar, data)
+            x_bar, q = model(x)
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+            reconstr_loss = F.mse_loss(x_bar, x)
+            kl_loss = F.kl_div(q.log(), p[idx])
+            loss = args.gamma * kl_loss + reconstr_loss
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
 
-def save_idec_visualizations(X_2d_original, X_2d_encoded, labels, centers_encoded, min_dist_in_z, epoch, vis_dir):
-    """
-    可视化：
-    1. 原始空间和编码空间的聚类结果（不带中心）
-    2. 编码空间距离 → 原始空间等高线图
-    """
+def save_simple_visualizations(X_2d_original, X_2d_encoded, labels, epoch, vis_dir):
     epoch_dir = f"{vis_dir}/epoch_{epoch:03d}"
     os.makedirs(epoch_dir, exist_ok=True)
 
-    # --- 1. 原始空间聚类图 ---
+    # ==================== 1. 原始空间聚类图 ====================
     plt.figure(figsize=(8, 6))
-    scatter = plt.scatter(X_2d_original[:, 0], X_2d_original[:, 1], c=labels, cmap='viridis', alpha=0.7, s=20)
+    scatter = plt.scatter(X_2d_original[:, 0], X_2d_original[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
     plt.title(f"Original Space Clustering - Epoch {epoch}")
-    plt.xlabel("Dim 1")
-    plt.ylabel("Dim 2")
-    plt.colorbar(scatter, label='Cluster')
-    plt.grid(True, alpha=0.3)
+    plt.xlabel("Dimension 1")
+    plt.ylabel("Dimension 2")
+    plt.colorbar(scatter, label='Cluster Labels')
+    plt.grid(True)
     plt.axis('equal')
     plt.tight_layout()
-    plt.savefig(f"{epoch_dir}/original_clustering.jpg", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{epoch_dir}/original_space_clustering_epoch_{epoch:03d}.jpg", dpi=300, bbox_inches='tight')
     plt.close()
 
-    # --- 2. 编码空间聚类图 ---
+    # ==================== 2. 编码空间聚类图 ====================
     plt.figure(figsize=(8, 6))
-    scatter = plt.scatter(X_2d_encoded[:, 0], X_2d_encoded[:, 1], c=labels, cmap='viridis', alpha=0.7, s=20)
+    scatter = plt.scatter(X_2d_encoded[:, 0], X_2d_encoded[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
     plt.title(f"Encoded Space Clustering - Epoch {epoch}")
-    plt.xlabel("Dim 1")
-    plt.ylabel("Dim 2")
-    plt.colorbar(scatter, label='Cluster')
-    plt.grid(True, alpha=0.3)
+    plt.xlabel("Dimension 1")
+    plt.ylabel("Dimension 2")
+    plt.colorbar(scatter, label='Cluster Labels')
+    plt.grid(True)
     plt.axis('equal')
     plt.tight_layout()
-    plt.savefig(f"{epoch_dir}/encoded_clustering.jpg", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{epoch_dir}/encoded_space_clustering_epoch_{epoch:03d}.jpg", dpi=300, bbox_inches='tight')
     plt.close()
 
-    # --- 3. 原始空间 + 编码空间距离等高线 ---
-    x_min, x_max = X_2d_original[:, 0].min() - 1, X_2d_original[:, 0].max() + 1
-    y_min, y_max = X_2d_original[:, 1].min() - 1, X_2d_original[:, 1].max() + 1
-    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 100),
-                         np.linspace(y_min, y_max, 100))
-    grid_points = np.c_[xx.ravel(), yy.ravel()]
-
-    # 使用 RBF 插值：将编码空间距离映射到原始空间网格
-    try:
-        rbf = Rbf(X_2d_original[:, 0], X_2d_original[:, 1], min_dist_in_z, function='multiquadric', smooth=1)
-        dist_on_grid = rbf(grid_points[:, 0], grid_points[:, 1])
-        dist_on_grid = dist_on_grid.reshape(xx.shape)
-    except:
-        # 备用：简单最近邻插值
-        from scipy.interpolate import griddata
-        dist_on_grid = griddata(X_2d_original, min_dist_in_z, (xx, yy), method='linear', fill_value=np.nanmean(min_dist_in_z))
-        dist_on_grid = np.nan_to_num(dist_on_grid)
-
-    # 绘图
-    plt.figure(figsize=(10, 8))
-    scatter = plt.scatter(X_2d_original[:, 0], X_2d_original[:, 1], c=labels, cmap='viridis', alpha=0.7, s=20)
-    contour = plt.contour(xx, yy, dist_on_grid, levels=10, colors='black', alpha=0.6, linestyles='--', linewidths=1.2)
-    plt.clabel(contour, inline=True, fontsize=8, fmt="%.2f")
-
-    plt.title(f"Original Space with Encoded Distance Contours - Epoch {epoch}")
-    plt.xlabel("Dim 1")
-    plt.ylabel("Dim 2")
-    plt.colorbar(scatter, label='Cluster Label')
-    plt.grid(True, alpha=0.3)
-    plt.axis('equal')
-    plt.tight_layout()
-    plt.savefig(f"{epoch_dir}/original_with_distance_contours.jpg", dpi=300, bbox_inches='tight')
-    plt.close()
-
-    print(f"✅ Saved visualizations for epoch {epoch} at: {epoch_dir}/")
-            
+    print(f"✅ 已为 epoch {epoch} 保存聚类可视化结果到 {epoch_dir}/")
 
 if __name__ == "__main__":
 
