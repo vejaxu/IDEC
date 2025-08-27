@@ -388,7 +388,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.cuda = torch.cuda.is_available()
     print("use cuda: {}".format(args.cuda))
-    device = torch.device("cuda:1" if args.cuda else "cpu")
+    device = torch.device("cuda:0" if args.cuda else "cpu")
 
     if args.dataset == 'mnist':
         args.pretrain_path = f'data/mnist/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
