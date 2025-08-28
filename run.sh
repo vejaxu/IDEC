@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dataset_name="4C"  # 替换成实际的数据集名称
+dataset_name="AC"  # 替换成实际的数据集名称
 gamma_values=(0.01 0.02 0.05 0.1 0.2 0.5 1.0)
 
 for gamma in "${gamma_values[@]}"
