@@ -25,9 +25,7 @@ import os
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from utils import *
-
-from scipy.interpolate import Rbf
-from sklearn.metrics.pairwise import euclidean_distances
+from scipy.spatial.distance import cdist
 
 
 class AE(nn.Module):
@@ -177,8 +175,8 @@ def train_idec():
         f.write("=================================================\n\n")
 
     """ATTENTION !!!"""
-    # model.pretrain(args.pretrain_path)
-    model.pretrain()
+    model.pretrain(args.pretrain_path)
+    # model.pretrain()
 
     train_loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False)
@@ -232,15 +230,12 @@ def train_idec():
             model.eval()
             cluster_centers = model.cluster_layer.data
             
-            # 获取编码空间的表示和解码空间的表示
             with torch.no_grad():
-                # 原始数据在编码空间的表示
                 enc_h1 = F.relu(model.ae.enc_1(data))
                 enc_h2 = F.relu(model.ae.enc_2(enc_h1))
                 enc_h3 = F.relu(model.ae.enc_3(enc_h2))
                 x_encoded = model.ae.z_layer(enc_h3).cpu().numpy()
 
-            # 原始空间数据
             x_input = dataset.x_row
 
             if x_input.shape[1] > 2:
@@ -252,6 +247,14 @@ def train_idec():
                 x_encoded_2d = x_encoded
 
             save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
+            plot_contour_with_centers(
+                x_input=x_input,
+                autoencoder=model,
+                cluster_centers=cluster_centers,  # 来自 model.cluster_layer.data
+                y_pred=y_pred,
+                epoch=epoch,
+                vis_dir=vis_dir
+            )
 
             if epoch > 0 and delta_label < args.tol:
                 print('delta_label {:.4f}'.format(delta_label), '< tol',
@@ -279,7 +282,6 @@ def save_simple_visualizations(X_2d_original, X_2d_encoded, labels, epoch, vis_d
     epoch_dir = f"{vis_dir}/epoch_{epoch:03d}"
     os.makedirs(epoch_dir, exist_ok=True)
 
-    # ==================== 1. 原始空间聚类图 ====================
     plt.figure(figsize=(8, 6))
     scatter = plt.scatter(X_2d_original[:, 0], X_2d_original[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
     plt.title(f"Original Space Clustering - Epoch {epoch}")
@@ -292,7 +294,6 @@ def save_simple_visualizations(X_2d_original, X_2d_encoded, labels, epoch, vis_d
     plt.savefig(f"{epoch_dir}/original_space_clustering_epoch_{epoch:03d}.jpg", dpi=300, bbox_inches='tight')
     plt.close()
 
-    # ==================== 2. 编码空间聚类图 ====================
     plt.figure(figsize=(8, 6))
     scatter = plt.scatter(X_2d_encoded[:, 0], X_2d_encoded[:, 1], c=labels, cmap='viridis', alpha=0.7, s=15)
     plt.title(f"Encoded Space Clustering - Epoch {epoch}")
@@ -305,7 +306,98 @@ def save_simple_visualizations(X_2d_original, X_2d_encoded, labels, epoch, vis_d
     plt.savefig(f"{epoch_dir}/encoded_space_clustering_epoch_{epoch:03d}.jpg", dpi=300, bbox_inches='tight')
     plt.close()
 
-    print(f"✅ 已为 epoch {epoch} 保存聚类可视化结果到 {epoch_dir}/")
+
+def plot_contour_with_centers(
+    x_input,
+    autoencoder,
+    cluster_centers,
+    y_pred,
+    epoch,
+    vis_dir,
+    n_grid=100
+):
+    device = next(autoencoder.parameters()).device
+    autoencoder.eval()
+
+    os.makedirs(vis_dir, exist_ok=True)
+
+    if isinstance(x_input, np.ndarray):
+        x_input_tensor = torch.tensor(x_input, dtype=torch.float32).to(device)
+    else:
+        x_input_tensor = x_input.to(device)
+
+    if isinstance(cluster_centers, np.ndarray):
+        cluster_centers = torch.tensor(cluster_centers, dtype=torch.float32).to(device)
+    else:
+        cluster_centers = cluster_centers.to(device)
+
+    assert x_input.shape[1] >= 2, "Input dimension must be at least 2 for 2D contour plot."
+
+    x0_min, x0_max = x_input[:, 0].min(), x_input[:, 0].max()
+    x1_min, x1_max = x_input[:, 1].min(), x_input[:, 1].max()
+
+    # 扩展边界
+    x0_range = np.linspace(x0_min - 0.5, x0_max + 0.5, n_grid)
+    x1_range = np.linspace(x1_min - 0.5, x1_max + 0.5, n_grid)
+    xx, yy = np.meshgrid(x0_range, x1_range)
+    grid_points_2d = np.c_[xx.ravel(), yy.ravel()]  # (n_grid*n_grid, 2)
+
+    if x_input.shape[1] > 2:
+        rest_mean = np.mean(x_input, axis=0, keepdims=True)[:, 2:]  # (1, D-2)
+        rest_repeated = np.tile(rest_mean, (grid_points_2d.shape[0], 1))  # (N_grid, D-2)
+        grid_full = np.hstack([grid_points_2d, rest_repeated])  # (N_grid, D)
+    else:
+        grid_full = grid_points_2d
+
+    grid_tensor = torch.tensor(grid_full, dtype=torch.float32).to(device)  # (N_grid^2, D)
+
+    with torch.no_grad():
+        _, z_grid = autoencoder.ae.forward(grid_tensor) # (N_grid^2, D_z)
+        z_grid_np = z_grid.cpu().numpy()
+
+        _, x_encoded = autoencoder.ae.forward(x_input_tensor) # (N, D_z)
+        x_encoded_np = x_encoded.cpu().numpy()
+
+    centers_np = cluster_centers.cpu().numpy()
+
+    distances = cdist(z_grid_np, centers_np, metric='euclidean')  # (N_grid^2, K)
+    min_distances = np.min(distances, axis=1)                     # (N_grid^2,)
+    zz = min_distances.reshape(xx.shape)                          # (n_grid, n_grid)
+
+    plt.figure(figsize=(8, 6))
+
+    contour = plt.contour(xx, yy, zz, levels=10, colors='black', alpha=0.6, linewidths=0.8)
+    plt.clabel(contour, inline=1, fontsize=8, fmt="%.2f")
+    contourf = plt.contourf(xx, yy, zz, levels=50, cmap='RdYlBu_r', alpha=0.7)
+    plt.colorbar(contourf, label='Min Distance to Cluster Centers (latent space)')
+
+    scatter = plt.scatter(
+        x_input[:, 0], x_input[:, 1],
+        c=y_pred, cmap='Set3', s=20, edgecolors='k', alpha=0.8
+    )
+
+    center_indices = []
+    for i in range(centers_np.shape[0]):
+        dist_to_center = np.linalg.norm(x_encoded_np - centers_np[i], axis=1)
+        closest_idx = np.argmin(dist_to_center)
+        center_indices.append(closest_idx)
+
+    center_coords = x_input[center_indices]
+    plt.scatter(
+        center_coords[:, 0], center_coords[:, 1],
+        c='red', marker='x', s=200, linewidths=3, label='Cluster Centers (approx)'
+    )
+
+    plt.title(f'Contour Map of Latent Distance - Epoch {epoch}')
+    plt.xlabel('Input Dim 1')
+    plt.ylabel('Input Dim 2')
+    plt.legend()
+    plt.tight_layout()
+
+    save_path = f"{vis_dir}/contour_epoch_{epoch:03d}.png"
+    plt.savefig(save_path, dpi=150)
+    plt.close()
+
 
 if __name__ == "__main__":
 
@@ -404,6 +496,7 @@ if __name__ == "__main__":
         args.update_interval = 10
         args.pretrain_path = f'data/sparse_3_dense_3_dense_3_10/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = CustomDataset(args.dataset)
+
 
     elif args.dataset == 'sparse_8_dense_1_dense_1_10':
         args.n_clusters = 3
