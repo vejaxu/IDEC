@@ -246,7 +246,7 @@ def train_idec():
                 x_input_2d = x_input
                 x_encoded_2d = x_encoded
 
-            save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
+            # save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
             plot_contour_with_centers(
                 x_input=x_input,
                 autoencoder=model,
@@ -316,11 +316,22 @@ def plot_contour_with_centers(
     vis_dir,
     n_grid=100
 ):
+    """
+    在原始输入空间的前两维上绘制基于编码空间中到聚类中心距离的等高线图。
+    所有网格点都会通过 autoencoder.ae 映射到隐空间，确保语义一致性。
+    不再标出聚类中心位置。
+    """
+    # -----------------------------
+    # 0. 设置设备 & 确保模型在 eval 模式
+    # -----------------------------
     device = next(autoencoder.parameters()).device
     autoencoder.eval()
 
     os.makedirs(vis_dir, exist_ok=True)
 
+    # -----------------------------
+    # 1. 输入处理
+    # -----------------------------
     if isinstance(x_input, np.ndarray):
         x_input_tensor = torch.tensor(x_input, dtype=torch.float32).to(device)
     else:
@@ -333,70 +344,77 @@ def plot_contour_with_centers(
 
     assert x_input.shape[1] >= 2, "Input dimension must be at least 2 for 2D contour plot."
 
+    # -----------------------------
+    # 2. 构建网格（基于前两维）
+    # -----------------------------
     x0_min, x0_max = x_input[:, 0].min(), x_input[:, 0].max()
     x1_min, x1_max = x_input[:, 1].min(), x_input[:, 1].max()
 
-    # 扩展边界
     x0_range = np.linspace(x0_min - 0.5, x0_max + 0.5, n_grid)
     x1_range = np.linspace(x1_min - 0.5, x1_max + 0.5, n_grid)
     xx, yy = np.meshgrid(x0_range, x1_range)
-    grid_points_2d = np.c_[xx.ravel(), yy.ravel()]  # (n_grid*n_grid, 2)
+    grid_points_2d = np.c_[xx.ravel(), yy.ravel()]
 
+    # 高维补全
     if x_input.shape[1] > 2:
-        rest_mean = np.mean(x_input, axis=0, keepdims=True)[:, 2:]  # (1, D-2)
-        rest_repeated = np.tile(rest_mean, (grid_points_2d.shape[0], 1))  # (N_grid, D-2)
-        grid_full = np.hstack([grid_points_2d, rest_repeated])  # (N_grid, D)
+        rest_mean = np.mean(x_input, axis=0, keepdims=True)[:, 2:]
+        rest_repeated = np.tile(rest_mean, (grid_points_2d.shape[0], 1))
+        grid_full = np.hstack([grid_points_2d, rest_repeated])
     else:
         grid_full = grid_points_2d
 
-    grid_tensor = torch.tensor(grid_full, dtype=torch.float32).to(device)  # (N_grid^2, D)
+    grid_tensor = torch.tensor(grid_full, dtype=torch.float32).to(device)
 
+    # -----------------------------
+    # 3. 前向传播：获取隐空间表示
+    # -----------------------------
     with torch.no_grad():
-        _, z_grid = autoencoder.ae.forward(grid_tensor) # (N_grid^2, D_z)
+        _, z_grid = autoencoder.ae(grid_tensor)           # (N_grid^2, n_z)
         z_grid_np = z_grid.cpu().numpy()
 
-        _, x_encoded = autoencoder.ae.forward(x_input_tensor) # (N, D_z)
+        _, x_encoded = autoencoder.ae(x_input_tensor)     # (N, n_z)
         x_encoded_np = x_encoded.cpu().numpy()
 
     centers_np = cluster_centers.cpu().numpy()
 
-    distances = cdist(z_grid_np, centers_np, metric='euclidean')  # (N_grid^2, K)
-    min_distances = np.min(distances, axis=1)                     # (N_grid^2,)
-    zz = min_distances.reshape(xx.shape)                          # (n_grid, n_grid)
+    # -----------------------------
+    # 4. 计算最小距离
+    # -----------------------------
+    distances = cdist(z_grid_np, centers_np, metric='euclidean')
+    min_distances = np.min(distances, axis=1)
+    zz = min_distances.reshape(xx.shape)
 
+    # -----------------------------
+    # 5. 绘图
+    # -----------------------------
     plt.figure(figsize=(8, 6))
 
+    # 等高线
     contour = plt.contour(xx, yy, zz, levels=10, colors='black', alpha=0.6, linewidths=0.8)
     plt.clabel(contour, inline=1, fontsize=8, fmt="%.2f")
     contourf = plt.contourf(xx, yy, zz, levels=50, cmap='RdYlBu_r', alpha=0.7)
     plt.colorbar(contourf, label='Min Distance to Cluster Centers (latent space)')
 
+    # 数据点（聚类结果着色）
     scatter = plt.scatter(
         x_input[:, 0], x_input[:, 1],
         c=y_pred, cmap='Set3', s=20, edgecolors='k', alpha=0.8
     )
 
-    center_indices = []
-    for i in range(centers_np.shape[0]):
-        dist_to_center = np.linalg.norm(x_encoded_np - centers_np[i], axis=1)
-        closest_idx = np.argmin(dist_to_center)
-        center_indices.append(closest_idx)
-
-    center_coords = x_input[center_indices]
-    plt.scatter(
-        center_coords[:, 0], center_coords[:, 1],
-        c='red', marker='x', s=200, linewidths=3, label='Cluster Centers (approx)'
-    )
-
     plt.title(f'Contour Map of Latent Distance - Epoch {epoch}')
     plt.xlabel('Input Dim 1')
     plt.ylabel('Input Dim 2')
-    plt.legend()
+    # plt.legend()  # 移除图例，因为中心已去掉
     plt.tight_layout()
 
+    # -----------------------------
+    # 6. 保存
+    # -----------------------------
     save_path = f"{vis_dir}/contour_epoch_{epoch:03d}.png"
     plt.savefig(save_path, dpi=150)
     plt.close()
+
+    print(f"✅ Contour plot saved to {save_path}")
 
 
 if __name__ == "__main__":
