@@ -1,6 +1,6 @@
 ========== IDEC Training Configuration ==========
 lr: 0.001
-n_clusters: 4
+n_clusters: 2
 batch_size: 256
 n_z: 2
 dataset: init_bias
@@ -27,17 +27,19 @@ IDEC(
   )
 )=================================================
 
-Iter 000: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0000
-Iter 003: Acc 0.5692, NMI 0.6381, ARI 0.4751, Δlabel 0.4308
-Iter 006: Acc 0.5583, NMI 0.4588, ARI 0.3412, Δlabel 0.1150
-Iter 009: Acc 0.7183, NMI 0.6904, ARI 0.5845, Δlabel 0.2417
-Iter 012: Acc 0.6542, NMI 0.6956, ARI 0.5448, Δlabel 0.0967
-Iter 015: Acc 0.6717, NMI 0.7158, ARI 0.5686, Δlabel 0.0175
-Iter 018: Acc 0.8117, NMI 0.7456, ARI 0.6580, Δlabel 0.2333
-Iter 021: Acc 0.8567, NMI 0.7771, ARI 0.7095, Δlabel 0.0467
-Iter 024: Acc 0.9300, NMI 0.8579, ARI 0.8351, Δlabel 0.0733
-Iter 027: Acc 0.9742, NMI 0.9268, ARI 0.9337, Δlabel 0.0442
-Iter 030: Acc 0.9883, NMI 0.9601, ARI 0.9694, Δlabel 0.0142
-Iter 033: Acc 0.9975, NMI 0.9899, ARI 0.9934, Δlabel 0.0092
-Iter 036: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0025
-Iter 039: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0000
+Iter 000: Acc 0.5300, NMI 0.0026, ARI 0.0028, Δlabel 0.0000
+Iter 003: Acc 0.5583, NMI 0.0102, ARI 0.0128, Δlabel 0.0800
+Iter 006: Acc 0.5683, NMI 0.0142, ARI 0.0179, Δlabel 0.0133
+Iter 009: Acc 0.5742, NMI 0.0168, ARI 0.0212, Δlabel 0.0058
+Iter 012: Acc 0.5433, NMI 0.0055, ARI 0.0067, Δlabel 0.0542
+Iter 015: Acc 0.5367, NMI 0.0040, ARI 0.0046, Δlabel 0.0233
+Iter 018: Acc 0.5217, NMI 0.0014, ARI 0.0010, Δlabel 0.0483
+Iter 021: Acc 0.5183, NMI 0.0010, ARI 0.0005, Δlabel 0.0117
+Iter 024: Acc 0.5242, NMI 0.0017, ARI 0.0015, Δlabel 0.0142
+Iter 027: Acc 0.5292, NMI 0.0025, ARI 0.0026, Δlabel 0.0150
+Iter 030: Acc 0.5308, NMI 0.0027, ARI 0.0030, Δlabel 0.0117
+Iter 033: Acc 0.5233, NMI 0.0016, ARI 0.0013, Δlabel 0.0208
+Iter 036: Acc 0.5100, NMI 0.0003, ARI -0.0004, Δlabel 0.0133
+Iter 039: Acc 0.5125, NMI 0.0005, ARI -0.0002, Δlabel 0.0058
+Iter 042: Acc 0.5108, NMI 0.0003, ARI -0.0004, Δlabel 0.0017
+Iter 045: Acc 0.5100, NMI 0.0003, ARI -0.0004, Δlabel 0.0008

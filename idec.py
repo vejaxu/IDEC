@@ -561,7 +561,7 @@ if __name__ == "__main__":
 
 
     elif args.dataset == 'outliers':
-        args.n_clusters = 3
+        args.n_clusters = 2
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
@@ -583,7 +583,7 @@ if __name__ == "__main__":
 
 
     elif args.dataset == 'init_bias':
-        args.n_clusters = 4
+        args.n_clusters = 2
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100

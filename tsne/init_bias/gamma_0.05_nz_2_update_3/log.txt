@@ -1,6 +1,6 @@
 ========== IDEC Training Configuration ==========
 lr: 0.001
-n_clusters: 4
+n_clusters: 2
 batch_size: 256
 n_z: 2
 dataset: init_bias
@@ -27,7 +27,10 @@ IDEC(
   )
 )=================================================
 
-Iter 000: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0000
-Iter 003: Acc 0.9625, NMI 0.9186, ARI 0.9071, Δlabel 0.0375
-Iter 006: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0375
-Iter 009: Acc 0.9992, NMI 0.9960, ARI 0.9978, Δlabel 0.0008
+Iter 000: Acc 0.9217, NMI 0.6064, ARI 0.7110, Δlabel 0.0000
+Iter 003: Acc 0.6375, NMI 0.1944, ARI 0.0753, Δlabel 0.3442
+Iter 006: Acc 0.7875, NMI 0.3577, ARI 0.3302, Δlabel 0.1667
+Iter 009: Acc 0.8825, NMI 0.5336, ARI 0.5849, Δlabel 0.1050
+Iter 012: Acc 0.9125, NMI 0.5795, ARI 0.6804, Δlabel 0.1300
+Iter 015: Acc 0.9167, NMI 0.5862, ARI 0.6942, Δlabel 0.0308
+Iter 018: Acc 0.9158, NMI 0.5834, ARI 0.6914, Δlabel 0.0008
