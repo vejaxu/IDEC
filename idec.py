@@ -561,7 +561,7 @@ if __name__ == "__main__":
 
 
     elif args.dataset == 'outliers':
-        args.n_clusters = 2
+        args.n_clusters = 3
         args.n_input = 2
         args.pretrain_epoch = 200
         args.train_epoch = 100
@@ -590,6 +590,16 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/init_bias/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = CustomDataset(args.dataset)
+
+    elif args.dataset == 'imbalanced':
+        args.n_clusters = 3
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 2
+        args.update_interval = 3
+        args.pretrain_path = f'data/imbalanced/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = CustomDataset(args.dataset)
 
     print(args)
