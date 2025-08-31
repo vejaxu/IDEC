@@ -150,6 +150,12 @@ def pretrain_ae(model):
 
 def train_idec():
     model = IDEC(
+        # n_enc_1=100,
+        # n_enc_2=100,
+        # n_enc_3=200,
+        # n_dec_1=200,
+        # n_dec_2=100,
+        # n_dec_3=100,
         n_enc_1=500,
         n_enc_2=500,
         n_enc_3=1000,
