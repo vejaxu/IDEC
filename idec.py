@@ -246,7 +246,7 @@ def train_idec():
                 x_input_2d = x_input
                 x_encoded_2d = x_encoded
 
-            # save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
+            save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
             plot_contour_with_centers(
                 x_input=x_input,
                 autoencoder=model,
