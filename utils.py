@@ -98,6 +98,15 @@ def load_dataset(dataset_name):
         x = x_train.astype(np.float32)
         y = y_train.flatten().astype(np.int32)
         return x, y, x_row
+    elif dataset_name == "non_spherical_2":
+        path='/home/xwj/aaa/clustering/data/kmeans/dataset_non_spherical_2.mat'
+        f = loadmat(path)
+        x_train, y_train = f['data'], f['class']
+        x_row = x_train
+        x_train = (x_train - x_train.min(axis=0)) / (x_train.max(axis=0) - x_train.min(axis=0) + 1e-8)
+        x = x_train.astype(np.float32)
+        y = y_train.flatten().astype(np.int32)
+        return x, y, x_row
     elif dataset_name == "outliers":
         path='/home/xwj/aaa/clustering/data/kmeans/dataset_outliers.mat'
         f = loadmat(path)
