@@ -197,6 +197,18 @@ def train_idec():
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
     y_pred = kmeans.fit_predict(hidden.data.cpu().numpy())
 
+    """init_bias 初始化问题"""
+    # x_bar, hidden = model.ae(data)
+    # hidden_np = hidden.data.cpu().numpy()
+
+    # # 选择 class_id = 0 的两个点作为初始中心
+    # class_id = 1
+    # indices = np.where(y == class_id)[0][:2]  # 同一个类的两个点
+    # init_centers = hidden_np[indices]
+
+    # kmeans = KMeans(n_clusters=args.n_clusters, init=init_centers, n_init=1)
+    # y_pred = kmeans.fit_predict(hidden_np)
+
     nmi_k = nmi_score(y_pred, y)
     print("initial nmi score={:.4f}".format(nmi_k))
 
