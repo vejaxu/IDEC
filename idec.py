@@ -192,20 +192,35 @@ def train_idec():
     data = dataset.x
     y = dataset.y
     data = torch.Tensor(data).to(device)
-    x_bar, hidden = model.ae(data)
 
+    """正常流程"""
+    x_bar, hidden = model.ae(data)
     kmeans = KMeans(n_clusters=args.n_clusters, n_init=20)
     y_pred = kmeans.fit_predict(hidden.data.cpu().numpy())
 
     """init_bias 初始化问题"""
     # x_bar, hidden = model.ae(data)
     # hidden_np = hidden.data.cpu().numpy()
-
     # # 选择 class_id = 0 的两个点作为初始中心
     # class_id = 1
     # indices = np.where(y == class_id)[0][:2]  # 同一个类的两个点
     # init_centers = hidden_np[indices]
+    # kmeans = KMeans(n_clusters=args.n_clusters, init=init_centers, n_init=1)
+    # y_pred = kmeans.fit_predict(hidden_np)
 
+    # x_bar, hidden = model.ae(data)
+    # hidden_np = hidden.data.cpu().numpy()
+    # class_id = 1
+    # indices = np.where(y == class_id)[0] 
+    # class_embeddings = hidden_np[indices] 
+    # dist_matrix = cdist(class_embeddings, class_embeddings, metric='euclidean')
+    # max_idx = np.unravel_index(np.argmax(dist_matrix), dist_matrix.shape)
+    # i, j = max_idx
+    # point1_idx_in_class = i
+    # point2_idx_in_class = j
+    # init_point1_idx = indices[point1_idx_in_class]
+    # init_point2_idx = indices[point2_idx_in_class]
+    # init_centers = hidden_np[[init_point1_idx, init_point2_idx]]
     # kmeans = KMeans(n_clusters=args.n_clusters, init=init_centers, n_init=1)
     # y_pred = kmeans.fit_predict(hidden_np)
 
@@ -264,7 +279,7 @@ def train_idec():
                 x_input_2d = x_input
                 x_encoded_2d = x_encoded
 
-            # save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
+            save_simple_visualizations(x_input_2d, x_encoded_2d, y_pred, epoch, vis_dir)
             plot_contour_with_centers(
                 x_input=x_input,
                 autoencoder=model,

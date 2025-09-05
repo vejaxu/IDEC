@@ -27,11 +27,5 @@ IDEC(
   )
 )=================================================
 
-Iter 000: Acc 0.9933, NMI 0.9425, ARI 0.9735, Δlabel 0.0000
-Iter 003: Acc 0.7508, NMI 0.3449, ARI 0.2512, Δlabel 0.2475
-Iter 006: Acc 0.8675, NMI 0.5456, ARI 0.5399, Δlabel 0.1167
-Iter 009: Acc 0.9475, NMI 0.7467, ARI 0.8009, Δlabel 0.0817
-Iter 012: Acc 0.9783, NMI 0.8655, ARI 0.9151, Δlabel 0.0308
-Iter 015: Acc 0.9742, NMI 0.8469, ARI 0.8993, Δlabel 0.0042
-Iter 018: Acc 0.9892, NMI 0.9203, ARI 0.9571, Δlabel 0.0150
-Iter 021: Acc 0.9892, NMI 0.9203, ARI 0.9571, Δlabel 0.0000
+Iter 000: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0000
+Iter 003: Acc 1.0000, NMI 1.0000, ARI 1.0000, Δlabel 0.0000

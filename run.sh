@@ -8,4 +8,3 @@ do
     echo "Running IDEC with dataset=${dataset_name}, gamma=${gamma}"
     python idec.py --dataset "$dataset_name" --gamma "$gamma"
 done
- 
