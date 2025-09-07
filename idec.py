@@ -181,8 +181,8 @@ def train_idec():
         f.write("=================================================\n\n")
 
     """ATTENTION !!!"""
-    model.pretrain(args.pretrain_path)
-    # model.pretrain()
+    # model.pretrain(args.pretrain_path)
+    model.pretrain()
 
     train_loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False)
@@ -574,6 +574,17 @@ if __name__ == "__main__":
         args.n_z = 2
         args.update_interval = 3
         args.pretrain_path = f'data/non_spherical_2/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
+        dataset = CustomDataset(args.dataset)
+
+    
+    elif args.dataset == 'non_spherical_3':
+        args.n_clusters = 2
+        args.n_input = 2
+        args.pretrain_epoch = 200
+        args.train_epoch = 100
+        args.n_z = 2
+        args.update_interval = 3
+        args.pretrain_path = f'data/non_spherical_3/ae_gamma_{args.gamma}_nz_{args.n_z}_update_{args.update_interval}.pkl'
         dataset = CustomDataset(args.dataset)
 
 
