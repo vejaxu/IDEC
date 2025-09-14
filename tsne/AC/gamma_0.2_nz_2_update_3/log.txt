@@ -1,0 +1,90 @@
+========== IDEC Training Configuration ==========
+lr: 0.001
+n_clusters: 2
+batch_size: 256
+n_z: 2
+dataset: AC
+pretrain_path: data/AC/ae_gamma_0.2_nz_2_update_3.pkl
+gamma: 0.2
+update_interval: 3
+tol: 0.001
+train_epoch: 100
+pretrain_epoch: 200
+cuda: True
+n_input: 2
+=================================================
+
+IDEC(
+  (ae): AE(
+    (enc_1): Linear(in_features=2, out_features=500, bias=True)
+    (enc_2): Linear(in_features=500, out_features=500, bias=True)
+    (enc_3): Linear(in_features=500, out_features=1000, bias=True)
+    (z_layer): Linear(in_features=1000, out_features=2, bias=True)
+    (dec_1): Linear(in_features=2, out_features=1000, bias=True)
+    (dec_2): Linear(in_features=1000, out_features=500, bias=True)
+    (dec_3): Linear(in_features=500, out_features=500, bias=True)
+    (x_bar_layer): Linear(in_features=500, out_features=2, bias=True)
+  )
+)=================================================
+
+Iter 000: Acc 0.9034, NMI 0.5034, ARI 0.6413, Δlabel 0.0000
+Iter 003: Acc 0.9074, NMI 0.5825, ARI 0.6587, Δlabel 0.0478
+Iter 006: Acc 0.9014, NMI 0.5126, ARI 0.6365, Δlabel 0.0299
+Iter 009: Acc 0.8954, NMI 0.4784, ARI 0.6156, Δlabel 0.0239
+Iter 012: Acc 0.9034, NMI 0.5319, ARI 0.6439, Δlabel 0.0239
+Iter 015: Acc 0.9004, NMI 0.5100, ARI 0.6333, Δlabel 0.0090
+Iter 018: Acc 0.9024, NMI 0.5320, ARI 0.6409, Δlabel 0.0120
+Iter 021: Acc 0.9034, NMI 0.5346, ARI 0.6441, Δlabel 0.0010
+========== IDEC Training Configuration ==========
+lr: 0.001
+n_clusters: 2
+batch_size: 256
+n_z: 2
+dataset: AC
+pretrain_path: data/AC/ae_gamma_0.2_nz_2_update_3.pkl
+gamma: 0.2
+update_interval: 3
+tol: 0.001
+train_epoch: 100
+pretrain_epoch: 200
+cuda: True
+n_input: 2
+=================================================
+
+IDEC(
+  (ae): AE(
+    (enc_1): Linear(in_features=2, out_features=500, bias=True)
+    (enc_2): Linear(in_features=500, out_features=500, bias=True)
+    (enc_3): Linear(in_features=500, out_features=1000, bias=True)
+    (z_layer): Linear(in_features=1000, out_features=2, bias=True)
+    (dec_1): Linear(in_features=2, out_features=1000, bias=True)
+    (dec_2): Linear(in_features=1000, out_features=500, bias=True)
+    (dec_3): Linear(in_features=500, out_features=500, bias=True)
+    (x_bar_layer): Linear(in_features=500, out_features=2, bias=True)
+  )
+)=================================================
+
+Iter 000: Acc 0.9034, NMI 0.5034, ARI 0.6413, Δlabel 0.0000
+Iter 003: Acc 0.9064, NMI 0.5800, ARI 0.6554, Δlabel 0.0488
+Iter 006: Acc 0.9044, NMI 0.5272, ARI 0.6466, Δlabel 0.0279
+Iter 009: Acc 0.8954, NMI 0.4784, ARI 0.6156, Δlabel 0.0269
+Iter 012: Acc 0.9004, NMI 0.5168, ARI 0.6339, Δlabel 0.0209
+Iter 015: Acc 0.8984, NMI 0.4986, ARI 0.6264, Δlabel 0.0100
+Iter 018: Acc 0.9064, NMI 0.5539, ARI 0.6544, Δlabel 0.0199
+Iter 021: Acc 0.9034, NMI 0.5319, ARI 0.6439, Δlabel 0.0070
+Iter 024: Acc 0.9084, NMI 0.5691, ARI 0.6613, Δlabel 0.0110
+Iter 027: Acc 0.9114, NMI 0.6080, ARI 0.6721, Δlabel 0.0110
+Iter 030: Acc 0.9034, NMI 0.6033, ARI 0.6465, Δlabel 0.0120
+Iter 033: Acc 0.9044, NMI 0.5971, ARI 0.6496, Δlabel 0.0050
+Iter 036: Acc 0.9044, NMI 0.6057, ARI 0.6497, Δlabel 0.0020
+Iter 039: Acc 0.9014, NMI 0.5986, ARI 0.6402, Δlabel 0.0030
+Iter 042: Acc 0.8984, NMI 0.5915, ARI 0.6307, Δlabel 0.0030
+Iter 045: Acc 0.8894, NMI 0.5712, ARI 0.6028, Δlabel 0.0090
+Iter 048: Acc 0.8865, NMI 0.5647, ARI 0.5936, Δlabel 0.0030
+Iter 051: Acc 0.8855, NMI 0.5626, ARI 0.5906, Δlabel 0.0050
+Iter 054: Acc 0.8765, NMI 0.5438, ARI 0.5636, Δlabel 0.0090
+Iter 057: Acc 0.8805, NMI 0.5520, ARI 0.5755, Δlabel 0.0040
+Iter 060: Acc 0.8755, NMI 0.5418, ARI 0.5606, Δlabel 0.0050
+Iter 063: Acc 0.8785, NMI 0.5479, ARI 0.5695, Δlabel 0.0030
+Iter 066: Acc 0.8725, NMI 0.5358, ARI 0.5518, Δlabel 0.0060
+Iter 069: Acc 0.8725, NMI 0.5358, ARI 0.5518, Δlabel 0.0000

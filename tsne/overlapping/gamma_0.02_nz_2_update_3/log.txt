@@ -1,0 +1,41 @@
+========== IDEC Training Configuration ==========
+lr: 0.001
+n_clusters: 2
+batch_size: 256
+n_z: 2
+dataset: overlapping
+pretrain_path: data/overlapping/ae_gamma_0.02_nz_2_update_3.pkl
+gamma: 0.02
+update_interval: 3
+tol: 0.001
+train_epoch: 100
+pretrain_epoch: 200
+cuda: True
+n_input: 2
+=================================================
+
+IDEC(
+  (ae): AE(
+    (enc_1): Linear(in_features=2, out_features=500, bias=True)
+    (enc_2): Linear(in_features=500, out_features=500, bias=True)
+    (enc_3): Linear(in_features=500, out_features=1000, bias=True)
+    (z_layer): Linear(in_features=1000, out_features=2, bias=True)
+    (dec_1): Linear(in_features=2, out_features=1000, bias=True)
+    (dec_2): Linear(in_features=1000, out_features=500, bias=True)
+    (dec_3): Linear(in_features=500, out_features=500, bias=True)
+    (x_bar_layer): Linear(in_features=500, out_features=2, bias=True)
+  )
+)=================================================
+
+Iter 000: Acc 0.7825, NMI 0.2600, ARI 0.3187, Δlabel 0.0000
+Iter 003: Acc 0.7058, NMI 0.2190, ARI 0.1690, Δlabel 0.1717
+Iter 006: Acc 0.7808, NMI 0.2698, ARI 0.3149, Δlabel 0.1417
+Iter 009: Acc 0.7958, NMI 0.2991, ARI 0.3496, Δlabel 0.0383
+Iter 012: Acc 0.7833, NMI 0.2984, ARI 0.3206, Δlabel 0.0408
+Iter 015: Acc 0.7958, NMI 0.2821, ARI 0.3495, Δlabel 0.0792
+Iter 018: Acc 0.7950, NMI 0.2856, ARI 0.3476, Δlabel 0.0142
+Iter 021: Acc 0.7575, NMI 0.2663, ARI 0.2647, Δlabel 0.1025
+Iter 024: Acc 0.7742, NMI 0.2760, ARI 0.3001, Δlabel 0.0350
+Iter 027: Acc 0.7717, NMI 0.2709, ARI 0.2947, Δlabel 0.0025
+Iter 030: Acc 0.7650, NMI 0.2658, ARI 0.2804, Δlabel 0.0133
+Iter 033: Acc 0.7642, NMI 0.2646, ARI 0.2786, Δlabel 0.0008
